@@ -10,7 +10,7 @@
 		c.server.get({
 			action: 'getNote',
 			noteID: $rootScope.noteID
-			
+
 		}).then(function(r) {
 			console.log('selectNote promise received');
 			c.data.title = r.data.note.title;
@@ -21,38 +21,43 @@
 	});
 
 
-	c.selectButton = function(updateType){
-			c.server.get({
-				action: 'updateNote',
-				noteID: c.data.noteID,
-				noteBody: c.data.note,
-				noteTitle: c.data.title
-			}).then(function(r) {
-				console.log('then function begins');
+	c.selectButton = function() {
+		console.log('clicked');
+		var obj = {};
+		
+		obj.noteID = c.data.noteID;
+		obj.noteBody = c.data.note;
+		obj.noteTitle = c.data.title;
+		
+		console.log('obj: ' + JSON.stringify(obj))
+		console.log('c.data: ' + JSON.stringify(c));
+		
+		c.server.get({
+			action: 'updateNote',
+			noteID: obj.noteID,
+			noteBody: obj.noteBody,
+			noteTitle: obj.noteTitle
+			
+		}).then(function(r){
 				
-				if(c.data.note || c.data.title) {
-					console.log('c.updateNot.title pressed');
-					console.log('c.data: ' + JSON.stringify(c.data));
-					console.log('r.data: ' + JSON.stringify(r.data));
-					//c.data.title = r.data.title;
-					//c.data.note = r.data.note;
-					
-					//var id = c.data.noteID;
-					$rootScope.$emit('updateNote', r.data);
-					//console.log('id: ' + id);
-					//console.log('c.data.note: ' + c.data.note);
-					
-				}
-				
-				
-				
-				
-			});		
+				console.log('r.data: ' + JSON.stringify(r.data));
+				$scope.$emit('renderNote', r.data);
+			
+		})
+
 	}
 
-}]]></client_script>
+}
+]]></client_script>
         <controller_as>c</controller_as>
-        <css/>
+        <css>.button{
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 2px;	
+  cursor: pointer;
+}</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
         <description/>
@@ -80,10 +85,10 @@
 			else if (input.action == 'updateNote') {
 				note.title = input.noteTitle; 
 				note.note = input.noteBody; 
-				note.update(); 
+				note.update();
 				
-				data.title = note.getDisplayValue('title');
-				data.note = note.getDisplayValue('note').slice(0,20);
+				data.title = note.getValue('title');
+				data.note = note.getValue('note').slice(0,20);
 				
 				console.log('server script: data title: ' + data.title);
 				
@@ -98,14 +103,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-06-07 05:02:50</sys_created_on>
         <sys_id>1aeae9ff2f7341105e66d2172799b6ac</sys_id>
-        <sys_mod_count>111</sys_mod_count>
+        <sys_mod_count>198</sys_mod_count>
         <sys_name>Notes body</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_1aeae9ff2f7341105e66d2172799b6ac</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-06-13 18:27:42</sys_updated_on>
+        <sys_updated_on>2022-06-14 21:38:47</sys_updated_on>
         <template><![CDATA[<div class="panel panel-default" ng-show="c.data.noteID">
   <div class="panel-heading clearfix">
     <div class="row">
@@ -118,7 +123,7 @@
     <textarea class="form-control" id="note-body" ng-model="c.data.note" ng-change="c.updateNote('body')" ng-model-options="{debounce: 1000}" ></textarea>
   </div>
   <div>
-    <button class='form-update' ng-click='c.selectButton($index)'>
+    <button class='form-update' class="btn btn-primary btn-sm pull-right form-control" id="button" ng-click="c.selectButton()">
       update
     </button>
   </div>
