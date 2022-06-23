@@ -5,7 +5,7 @@
 	/* widget controller */
 	var c = this;
 	c.notePos = 0;
-	
+
 	c.selectItem = function(idx) {
 		c.notePos = idx;
 		var id = c.data.notes[idx].sys_id;
@@ -21,9 +21,9 @@
 		console.log("c.notePos " + JSON.stringify(c.data.notes[c.notePos]));
 		console.log('c.data.notes : ' + JSON.stringify(c.data.notes));
 		c.data.notes[c.notePos].title = data.title;
-    c.data.notes[c.notePos].note = data.note;
+		c.data.notes[c.notePos].note = data.note;
 	});
-	
+
 	c.newNote = function() {
 		c.server.get({
 			action: 'newNote'
@@ -34,7 +34,7 @@
 			$rootScope.$emit('selectNote', c.data.noteID);
 		});
 	}
-	
+
 	$rootScope.$on('deleteNote', function(event,data){
 		c.data.notes.splice(c.notePos, 1);
 	});
@@ -55,8 +55,9 @@
 			}
 		}
 	}
-	
+
 	c.snNoteDelete = function(sysID) {
+		console.log('enters Delete function');
 		c.server.get({
 			action: snDeleteNote,
 			noteID: sysID
@@ -64,31 +65,33 @@
 			c.data.notes = r.data.notes;
 		});
 	}
-	
+
 	spUtil.recordWatch($scope,'x_snc_createnotes_note', 'numberANYTHING', function(name){
-		console.log(c.data.operation);
-		console.log(name);
-		
-		if(data.name.operation == 'update'){
+		console.log('c.data.operation: ' + name.data.operation);
+		console.log('operation name: ' + JSON.stringify(name));
+
+		if(name.data.operation == 'update'){
 			c.snNoteUpdate(name,name.data.sys_id);
 		}
-		
-		if(data.name.operation == 'delete'){
+
+		if(name.data.operation == 'delete'){
+			console.log('enters client conditional');
 			c.snNoteDelete(name.data.sys_id);
 		}
-		
-		if(data.name.operation == 'insert'){
+
+		if(name.data.operation == 'insert'){
 			c.server.refresh();
 		}
-		
+
 	});
+
 	
-	
-	
-	
+
 }]]></client_script>
         <controller_as>c</controller_as>
-        <css/>
+        <css>h3.panel-title{
+ font-size: 2rem
+}</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
         <description/>
@@ -99,7 +102,7 @@
         <internal>false</internal>
         <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
         <name>Notes List</name>
-        <option_schema/>
+        <option_schema>[{"hint":"Specify a title for the Notes List widget","name":"title","section":"other","default_value":"Notes","label":"Title","type":"string"},{"hint":"Select the maximum number of records to display","name":"maximum_records_to_display","section":"other","default_value":"5","label":"Maximum records to display","type":"choice","choices":[{"label":"2","value":"2"},{"label":"3","value":"3"},{"label":"5","value":"5"},{"label":"7","value":"7"},{"label":"11","value":"11"},{"label":"13","value":"13"},{"label":"17","value":"17"}]}]</option_schema>
         <public>false</public>
         <roles/>
         <script><![CDATA[(function() {
@@ -108,6 +111,7 @@
 	var noteGR = new GlideRecord('x_snc_createnotes_note');
 	noteGR.addQuery('user', gs.getUser().getID());
 	noteGR.orderByDesc('sys_created_on');
+	noteGR.setLimit(options.maximum_records_to_display);
 	noteGR.query();
 	while (noteGR.next()) {
 		var noteObj = {};
@@ -131,9 +135,11 @@
 		}
 		
 		if(input.action == 'snDeleteNote') {
+			console.log('enters server conditional');
 			var delNote = new GlideRecord('x_snc_createnotes_note');
 			if(delNote.get(input.noteID)){
 				delNote.deleteRecord();
+				console.log('record deletion executed');
 			}
 		}
 		
@@ -146,18 +152,18 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-06-07 05:00:06</sys_created_on>
         <sys_id>8a4ae17f2f7341105e66d2172799b645</sys_id>
-        <sys_mod_count>131</sys_mod_count>
+        <sys_mod_count>147</sys_mod_count>
         <sys_name>Notes List</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_8a4ae17f2f7341105e66d2172799b645</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-06-23 15:57:03</sys_updated_on>
+        <sys_updated_on>2022-06-23 19:09:55</sys_updated_on>
         <template><![CDATA[<div class="panel panel-default">
   <div class="panel-heading clearfix">
     <h3 class="panel-title pull-left">
-      ${Notes}
+      {{::c.options.title}}
     </h3>
     <button class="btn btn-default pull-right" ng-click="c.newNote()"> 
         <span class="glyphicon glyphicon-plus"></span> 
