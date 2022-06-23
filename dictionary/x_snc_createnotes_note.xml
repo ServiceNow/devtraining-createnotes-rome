@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<database>
-    <element label="Note" max_length="40" name="x_snc_createnotes_note" type="collection">
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element label="Note" max_length="40" name="x_snc_createnotes_note" sizeclass="2" type="collection">
         <element default="Enter notes here" label="Note" max_length="4000" name="note" type="string"/>
         <element default="javascript:getNextObjNumberPadded();" display="true" dynamic_default_value="fdcb83a85f220100a9ad2572f2b4773c" label="Number" max_length="40" name="number" type="string" use_dynamic_default="true"/>
         <element default="New Note" label="Title" max_length="100" name="title" type="string"/>
