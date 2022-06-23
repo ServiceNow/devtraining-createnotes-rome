@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
         <category>custom</category>
-        <client_script><![CDATA[function($rootScope,$scope) {
+        <client_script><![CDATA[function($rootScope,$scope,spUtil) {
 	/* widget controller */
 	var c = this;
 	c.notePos = 0;
@@ -62,8 +62,27 @@
 			noteID: sysID
 		}).then(function(r){
 			c.data.notes = r.data.notes;
-		})
+		});
 	}
+	
+	spUtil.recordWatch($scope,'x_snc_createnotes_note', 'numberANYTHING', function(name){
+		console.log(c.data.operation);
+		console.log(name);
+		
+		if(data.name.operation == 'update'){
+			c.snNoteUpdate(name,name.data.sys_id);
+		}
+		
+		if(data.name.operation == 'delete'){
+			c.snNoteDelete(name.data.sys_id);
+		}
+		
+		if(data.name.operation == 'insert'){
+			c.server.refresh();
+		}
+		
+	});
+	
 	
 	
 	
@@ -127,14 +146,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2022-06-07 05:00:06</sys_created_on>
         <sys_id>8a4ae17f2f7341105e66d2172799b645</sys_id>
-        <sys_mod_count>130</sys_mod_count>
+        <sys_mod_count>131</sys_mod_count>
         <sys_name>Notes List</sys_name>
         <sys_package display_value="CreateNotes" source="x_snc_createnotes">df5fd9a5090232007f44e1046c8ff69f</sys_package>
         <sys_policy/>
         <sys_scope display_value="CreateNotes">df5fd9a5090232007f44e1046c8ff69f</sys_scope>
         <sys_update_name>sp_widget_8a4ae17f2f7341105e66d2172799b645</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2022-06-22 20:37:18</sys_updated_on>
+        <sys_updated_on>2022-06-23 15:57:03</sys_updated_on>
         <template><![CDATA[<div class="panel panel-default">
   <div class="panel-heading clearfix">
     <h3 class="panel-title pull-left">
